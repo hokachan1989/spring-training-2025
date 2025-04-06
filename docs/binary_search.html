@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二分探索の可視化</title>
+    <style>
+        /* Interフォントの読み込み */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        /* 基本スタイル */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* メインコンテナ */
+        .container {
+            background-color: white;
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 56rem;
+            /* 少し幅広に */
+            box-sizing: border-box;
+        }
+
+        /* 見出し */
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #1f2937;
+        }
+
+        /* 説明文エリア */
+        .info-box {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .info-box strong {
+            color: #1d4ed8;
+            /* blue-700 */
+            font-weight: 600;
+        }
+
+        /* ソート注意書き */
+        .sort-notice {
+            font-size: 0.8rem;
+            color: #ef4444;
+            /* red-500 */
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        /* 設定エリア */
+        .settings-area {
+            display: flex;
+            flex-direction: column;
+            /* Mobile first */
+            gap: 16px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+
+        .input-group {
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            line-height: 1.5;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+            font-size: 1rem;
+            height: 42px;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+
+        /* ボタンエリア スタイル */
+        .button-group {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            /* Full width on mobile */
+            justify-content: flex-start;
+        }
+
+        /* ボタン共通スタイル */
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 50%;
+            font-weight: 600;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: background-color 0.15s ease-in-out, opacity 0.15s ease-in-out, border-color 0.15s ease-in-out;
+            cursor: pointer;
+            line-height: 1;
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            background-color: transparent;
+        }
+
+        button img {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 開始/次へボタン */
+        #start-button,
+        #next-step-button {
+            background-color: #60a5fa;
+            /* blue-400 */
+            border-color: #60a5fa;
+        }
+
+        #start-button:hover,
+        #next-step-button:hover {
+            background-color: #3b82f6;
+            /* blue-500 */
+            border-color: #3b82f6;
+        }
+
+        #start-button img,
+        #next-step-button img {
+            filter: brightness(0) invert(1);
+        }
+
+        /* リセットボタン */
+        #reset-button {
+            background-color: transparent;
+            border-color: #9ca3af;
+            /* gray-400 枠線 */
+        }
+
+        #reset-button:hover {
+            background-color: #f3f4f6;
+            /* gray-100 背景 */
+            border-color: #6b7280;
+            /* gray-500 枠線 */
+        }
+
+        #reset-button img {
+            filter: invert(52%) sepia(8%) saturate(415%) hue-rotate(176deg) brightness(90%) contrast(85%);
+        }
+
+        #reset-button:hover img {
+            filter: invert(39%) sepia(11%) saturate(414%) hue-rotate(177deg) brightness(95%) contrast(88%);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #e5e7eb !important;
+            border-color: #d1d5db !important;
+            box-shadow: none;
+        }
+
+        button:disabled img {
+            filter: brightness(0.8);
+        }
+
+        button:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+
+        #start-button:focus,
+        #next-step-button:focus {
+            box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.5);
+        }
+
+        #reset-button:focus {
+            box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.5);
+        }
+
+        /* Medium screens and up (レイアウト調整) */
+        @media (min-width: 768px) {
+            .settings-area {
+                flex-direction: row;
+                align-items: flex-end;
+            }
+
+            #list-input-group {
+                flex-grow: 1;
+                flex-shrink: 1;
+            }
+
+            #target-input-group {
+                flex-grow: 0;
+                flex-shrink: 0;
+                width: 120px;
+            }
+
+            .button-group {
+                flex-grow: 0;
+                flex-shrink: 0;
+                width: auto;
+                justify-content: flex-end;
+            }
+        }
+
+        /* 探す値 表示エリア スタイル */
+        .target-display-area {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .target-label {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        #target-value-block {
+            background-color: #fbcfe8 !important;
+            /* pink-200 */
+            border-color: #f472b6 !important;
+            /* pink-400 */
+            color: #9d174d !important;
+            /* pink-800 */
+            border-width: 2px !important;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* リスト表示エリア */
+        .list-display-wrapper {
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: #9CA3AF #F3F4F6;
+        }
+
+        .list-display-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .list-display-wrapper::-webkit-scrollbar-track {
+            background: #F3F4F6;
+            border-radius: 4px;
+        }
+
+        .list-display-wrapper::-webkit-scrollbar-thumb {
+            background-color: #9CA3AF;
+            border-radius: 4px;
+            border: 2px solid #F3F4F6;
+        }
+
+        .list-label {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+
+        .list-container-base {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 16px;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            min-height: 60px;
+            width: max-content;
+            box-sizing: border-box;
+            position: relative;
+            /* マーカー用 */
+            margin-bottom: 15px;
+            /* マーカー用スペース */
+        }
+
+        .list-item,
+        /* target-value-block も含む */
+        .index-item,
+        .pointer-item {
+            width: 40px;
+            /* 固定幅 */
+            text-align: center;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        #index-container {
+            margin-top: 4px;
+            min-height: 20px;
+            font-size: 0.75rem;
+            color: #4b5563;
+            background-color: transparent;
+            border: none;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        #pointer-container {
+            margin-top: 2px;
+            min-height: 18px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #4b5563;
+            background-color: transparent;
+            border: none;
+            padding: 0 16px;
+        }
+
+        /* リスト要素 */
+        .list-item {
+            padding: 8px 0;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            background-color: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+            height: 40px;
+            /* 固定高さ */
+            display: flex;
+            /* 中央揃え */
+            align-items: center;
+            /* 中央揃え */
+            justify-content: center;
+            /* 中央揃え */
+        }
+
+        .dimmed {
+            opacity: 0.3;
+        }
+
+        /* 中央(mid)マーカー & 枠線 */
+        .list-item.mid-marker {
+            border-color: #fbbf24 !important;
+            /* amber-400 */
+            border-width: 2px !important;
+            /* 枠線太さ 2px */
+        }
+
+        .list-item.mid-marker::before {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 6px solid #fbbf24;
+            /* 下向き▼ アンバー色 */
+            opacity: 1;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        /* インデックス要素 */
+        .index-item {
+            padding: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        /* ポインター要素 */
+        .pointer-item {
+            padding: 0;
+            position: relative;
+        }
+
+        .pointer-label {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1px 4px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .low-pointer .pointer-label,
+        .high-pointer .pointer-label {
+            background-color: #bfdbfe;
+            /* blue-200 */
+            color: #1e40af;
+            /* blue-800 */
+        }
+
+        .mid-pointer .pointer-label {
+            background-color: #fef3c7;
+            /* yellow-200 */
+            color: #a16207;
+            /* amber-700 */
+        }
+
+        /* 状態変化スタイル */
+        .found {
+            background-color: #d1fae5 !important;
+            /* green-100 */
+            border-color: #6ee7b7 !important;
+            /* green-300 */
+            color: #065f46 !important;
+            /* green-800 */
+            transform: scale(1.1);
+            z-index: 10;
+            border-width: 2px !important;
+        }
+
+        .checked-wrong {
+            /* dimmingで表現 */
+        }
+
+        /* ステータス表示エリア修正 (2行表示) */
+        .status-area {
+            text-align: left;
+            margin-top: 24px;
+            min-height: 3em;
+            line-height: 1.5;
+        }
+
+        #line1-status {
+            display: block;
+            font-weight: 600;
+            color: #1d4ed8;
+            white-space: nowrap;
+            margin-bottom: 4px;
+            min-height: 1.2em;
+        }
+
+        #line2-status {
+            display: block;
+            color: #374151;
+            font-weight: 500;
+            min-height: 1.5em;
+        }
+
+        /* メッセージボックス */
+        #message-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            z-index: 1000;
+            display: none;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>二分探索アルゴリズムの可視化</h1>
+
+        <div class="info-box">
+            <p>
+                二分探索は、<strong>ソート済みのリスト</strong>に対して、中央の値と比較して探索範囲を半分に絞りながら目的の値を探します。「開始」で探索を始め、「次へ」ボタンでステップごとに進めます。
+            </p>
+        </div>
+        <p class="sort-notice">※入力されたリストは自動的に昇順でソートされます。</p>
+
+        <div class="settings-area">
+            <div id="list-input-group" class="input-group">
+                <label for="list-input">リスト (カンマ区切り):</label>
+                <input type="text" id="list-input" value="3, 5, 8, 12, 15, 18, 22, 25, 29, 31, 35, 40">
+            </div>
+            <div id="target-input-group" class="input-group">
+                <label for="target-input">探す値:</label>
+                <input type="number" id="target-input" value="22">
+            </div>
+            <div class="button-group">
+                <button id="start-button" title="開始">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/play.svg" alt="開始" />
+                </button>
+                <button id="reset-button" style="display: none;" title="リセット">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/rotate-ccw.svg" alt="リセット" />
+                </button>
+                <button id="next-step-button" style="display: none;" title="次へ">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/arrow-right.svg" alt="次へ" />
+                </button>
+            </div>
+        </div>
+
+        <div class="target-display-area">
+            <span class="target-label">探す値:</span>
+            <div id="target-value-block" class="list-item">?</div>
+        </div>
+
+        <div class="list-display-wrapper">
+            <p class="list-label">リスト:</p>
+            <div id="list-container" class="list-container-base">
+            </div>
+            <div id="index-container" class="list-container-base">
+            </div>
+            <div id="pointer-container" class="list-container-base">
+            </div>
+        </div>
+
+        <div class="status-area">
+            <p id="line1-status"></p>
+            <p id="line2-status">リストと探す値を入力して「開始」を押してください。</p>
+        </div>
+    </div>
+
+    <div id="message-box"></div>
+
+    <script>
+        const listInput = document.getElementById('list-input');
+        const targetInput = document.getElementById('target-input');
+        const startButton = document.getElementById('start-button');
+        const nextStepButton = document.getElementById('next-step-button');
+        const resetButton = document.getElementById('reset-button');
+        const listContainer = document.getElementById('list-container');
+        const indexContainer = document.getElementById('index-container');
+        const pointerContainer = document.getElementById('pointer-container');
+        const line1StatusElement = document.getElementById('line1-status');
+        const line2StatusElement = document.getElementById('line2-status');
+        const targetValueBlock = document.getElementById('target-value-block');
+        const messageBox = document.getElementById('message-box');
+
+        let listItems = [];
+        let indexItems = [];
+        let pointerItems = [];
+        let searchList = [];
+        let targetValue = null;
+        let low = 0;
+        let high = -1;
+        let mid = -1;
+        let searchActive = false;
+        let foundIndex = -1;
+        let previousMidMarkerIndex = -1;
+        let searchState = 'idle';
+        let pendingLow = -1;
+        let pendingHigh = -1;
+
+        function updateButtonVisibility() {
+            const searchEnded = (searchState === 'found' || searchState === 'not_found' || searchState === 'done');
+            if (searchActive && !searchEnded) {
+                startButton.style.display = 'none';
+                nextStepButton.style.display = 'inline-flex';
+                resetButton.style.display = 'inline-flex';
+                nextStepButton.disabled = false;
+                resetButton.disabled = false;
+            } else {
+                if (searchEnded && searchState !== 'idle') {
+                    startButton.style.display = 'none';
+                    nextStepButton.style.display = 'none';
+                    resetButton.style.display = 'inline-flex';
+                    resetButton.disabled = false;
+                } else {
+                    startButton.style.display = 'inline-flex';
+                    nextStepButton.style.display = 'none';
+                    resetButton.style.display = 'none';
+                    startButton.disabled = false;
+                }
+            }
+        }
+
+        function initializeDisplay() {
+            listContainer.innerHTML = '';
+            indexContainer.innerHTML = '';
+            pointerContainer.innerHTML = '';
+            listItems = [];
+            indexItems = [];
+            pointerItems = [];
+
+            const rawList = listInput.value.split(',').map(item => item.trim()).filter(item => item !== '');
+            let tempList = rawList.map(item => parseInt(item, 10)).filter(item => !isNaN(item));
+            searchList = [...new Set(tempList)].sort((a, b) => a - b);
+
+            if (tempList.length !== searchList.length) {
+                showMessage("リストの重複は削除され、昇順でソートされました。");
+            } else if (rawList.length > 0 && tempList.length !== rawList.length) {
+                showMessage("リストの無効な入力は無視され、昇順でソートされました。");
+            }
+            listInput.value = searchList.join(', ');
+
+            searchList.forEach((value, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.textContent = value;
+                itemDiv.className = 'list-item';
+                listContainer.appendChild(itemDiv);
+                listItems.push(itemDiv);
+                const indexDiv = document.createElement('div');
+                indexDiv.textContent = index;
+                indexDiv.className = 'index-item';
+                indexContainer.appendChild(indexDiv);
+                indexItems.push(indexDiv);
+                const pointerDiv = document.createElement('div');
+                pointerDiv.className = 'pointer-item';
+                pointerContainer.appendChild(pointerDiv);
+                pointerItems.push(pointerDiv);
+            });
+            handleResetSearch();
+        }
+
+        function handleResetSearch() {
+            searchActive = false;
+            low = 0;
+            high = searchList.length - 1;
+            mid = -1;
+            foundIndex = -1;
+            targetValue = null;
+            searchState = 'idle';
+            pendingLow = -1;
+            pendingHigh = -1;
+            listItems.forEach(item => { item.className = 'list-item'; });
+            indexItems.forEach(item => { item.classList.remove('dimmed'); });
+            clearPointers();
+            removeMidMarker();
+            line1StatusElement.textContent = '';
+            line2StatusElement.textContent = 'リストと探す値を入力して「開始」を押してください。';
+            targetValueBlock.textContent = '?';
+            listInput.disabled = false;
+            targetInput.disabled = false;
+            updateButtonVisibility();
+        }
+
+        function showMessage(message) {
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            setTimeout(() => { messageBox.style.display = 'none'; }, 4000);
+        }
+
+        function handleStartSearch() {
+            initializeDisplay();
+            targetValue = parseInt(targetInput.value, 10);
+            if (isNaN(targetValue)) {
+                showMessage("探す値には数値を入力してください。");
+                handleResetSearch(); return;
+            }
+            if (searchList.length === 0) {
+                showMessage("リストが空です。");
+                handleResetSearch(); return;
+            }
+            targetValueBlock.textContent = targetValue;
+            searchActive = true;
+            low = 0;
+            high = searchList.length - 1;
+            mid = -1;
+            foundIndex = -1;
+            previousMidMarkerIndex = -1;
+            pendingLow = -1;
+            pendingHigh = -1;
+            searchState = 'check_mid';
+            listInput.disabled = true;
+            targetInput.disabled = true;
+            performSortStep();
+            updateButtonVisibility();
+        }
+
+        function handleNextStep() {
+            if (!searchActive || searchState === 'found' || searchState === 'not_found' || searchState === 'done') return;
+            performSortStep();
+        }
+
+        function performSortStep() {
+            removeMidMarker();
+
+            switch (searchState) {
+                case 'check_mid':
+                    if (low > high) {
+                        line1StatusElement.textContent = `探索範囲: [${low}..${high}]`;
+                        line2StatusElement.innerHTML = `探索範囲がなくなりました。<br>値 ${targetValue} はリスト内に見つかりませんでした。`;
+                        searchState = 'not_found';
+                        searchActive = false;
+                        removeMidMarker();
+                    } else {
+                        mid = Math.floor(low + (high - low) / 2);
+                        const midValue = searchList[mid];
+                        line1StatusElement.textContent = `探索範囲: [${low}..${high}] \u2192 中央(mid): ${mid}`;
+                        line2StatusElement.innerHTML = `インデックス ${mid} の値 (${midValue}) を確認します。`;
+                        updateVisuals();
+                        updateMidMarker(mid);
+                        searchState = 'compare_mid';
+                    }
+                    break;
+
+                case 'compare_mid':
+                    const midValueComp = searchList[mid];
+                    let comparisonText = "";
+                    updateMidMarker(mid);
+                    if (listItems[mid]) listItems[mid].classList.add('mid-marker');
+
+                    if (midValueComp === targetValue) {
+                        comparisonText = `<br><b>発見！</b> 値 ${targetValue} はインデックス ${mid} にありました。`;
+                        removeMidMarker();
+                        if (listItems[mid]) listItems[mid].classList.remove('mid-marker');
+                        if (listItems[mid]) listItems[mid].classList.add('found');
+                        foundIndex = mid;
+                        searchState = 'found';
+                        searchActive = false;
+                    } else if (midValueComp < targetValue) {
+                        comparisonText = `<br>${targetValue} > ${midValueComp} なので、探索範囲の左半分を除外します。`;
+                        pendingLow = mid + 1;
+                        pendingHigh = -1;
+                        searchState = 'update_range';
+                    } else {
+                        comparisonText = `<br>${targetValue} < ${midValueComp} なので、探索範囲の右半分を除外します。`;
+                        pendingHigh = mid - 1;
+                        pendingLow = -1;
+                        searchState = 'update_range';
+                    }
+                    line2StatusElement.innerHTML += comparisonText;
+                    break;
+
+                case 'update_range':
+                    if (pendingLow !== -1) {
+                        low = pendingLow;
+                        line2StatusElement.textContent = `low を ${low} に更新しました。`;
+                        pendingLow = -1;
+                    } else if (pendingHigh !== -1) {
+                        high = pendingHigh;
+                        line2StatusElement.textContent = `high を ${high} に更新しました。`;
+                        pendingHigh = -1;
+                    }
+                    updateVisuals();
+
+                    if (low > high) {
+                        line1StatusElement.textContent = `探索範囲: [${low}..${high}]`;
+                        line2StatusElement.innerHTML = `探索範囲がなくなりました。<br>値 ${targetValue} はリスト内に見つかりませんでした。`;
+                        searchState = 'not_found';
+                        searchActive = false;
+                        removeMidMarker();
+                    } else {
+                        searchState = 'check_mid';
+                    }
+                    break;
+
+                case 'found':
+                case 'not_found':
+                case 'done':
+                case 'idle':
+                default:
+                    break;
+            }
+            updateButtonVisibility();
+        }
+
+        function clearPointers() {
+            pointerItems.forEach(p => {
+                p.innerHTML = '';
+                p.classList.remove('low-pointer', 'high-pointer', 'mid-pointer');
+            });
+        }
+
+        function updateVisuals() {
+            clearPointers();
+            if (low >= 0 && low < pointerItems.length) {
+                pointerItems[low].innerHTML = `<span class="pointer-label">Low</span>`;
+                pointerItems[low].classList.add('low-pointer');
+            }
+            if (high >= 0 && high < pointerItems.length) {
+                if (low === high && pointerItems[high].innerHTML !== '') {
+                    pointerItems[high].querySelector('.pointer-label').textContent = 'Low/High';
+                } else {
+                    pointerItems[high].innerHTML += `<span class="pointer-label">High</span>`;
+                }
+                pointerItems[high].classList.add('high-pointer');
+            }
+            if (mid !== -1 && mid >= low && mid <= high) {
+                let midLabel = 'Mid';
+                if (mid === low && mid === high) midLabel = 'Low/Mid/High';
+                else if (mid === low) midLabel = 'Low/Mid';
+                else if (mid === high) midLabel = 'Mid/High';
+                let existingLabel = pointerItems[mid].querySelector('.pointer-label');
+                if (existingLabel) {
+                    if (pointerItems[mid].innerHTML.includes('Low') || pointerItems[mid].innerHTML.includes('High')) {
+                        existingLabel.textContent += '/Mid';
+                    } else {
+                        existingLabel.textContent = midLabel;
+                    }
+                } else {
+                    pointerItems[mid].innerHTML += `<span class="pointer-label">${midLabel}</span>`;
+                }
+                pointerItems[mid].classList.add('mid-pointer');
+            }
+
+            listItems.forEach((item, index) => {
+                if (index < low || index > high) {
+                    item.classList.add('dimmed');
+                    indexItems[index].classList.add('dimmed');
+                } else {
+                    item.classList.remove('dimmed');
+                    indexItems[index].classList.remove('dimmed');
+                }
+            });
+        }
+
+        function updateMidMarker(index) {
+            removeMidMarker();
+            if (index >= 0 && index < listItems.length && !listItems[index].classList.contains('found')) {
+                listItems[index].classList.add('mid-marker');
+                previousMidMarkerIndex = index;
+            } else {
+                previousMidMarkerIndex = -1;
+            }
+        }
+        function removeMidMarker() {
+            if (previousMidMarkerIndex !== -1 && listItems[previousMidMarkerIndex]) {
+                listItems[previousMidMarkerIndex].classList.remove('mid-marker');
+                listItems[previousMidMarkerIndex].style.borderWidth = '';
+            }
+            previousMidMarkerIndex = -1;
+        }
+
+        startButton.addEventListener('click', handleStartSearch);
+        nextStepButton.addEventListener('click', handleNextStep);
+        resetButton.addEventListener('click', handleResetSearch);
+        listInput.addEventListener('input', () => { handleResetSearch(); initializeDisplay(); });
+        targetInput.addEventListener('input', () => { handleResetSearch(); line1StatusElement.textContent = ''; line2StatusElement.textContent = 'リストと探す値を入力して「開始」を押してください。'; targetValueBlock.textContent = '?'; });
+        window.onload = initializeDisplay
+    </script>
+</body>
+</html>
