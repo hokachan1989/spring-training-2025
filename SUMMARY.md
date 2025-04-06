@@ -16,5 +16,6 @@
   * [選択ソート](algorithm/day-03/selection-sort.md)
   * [挿入ソート](algorithm/day-03/insertion-sort.md)
   * [アルゴリズムの計算量](algorithm/day-03/complexity.md)
+  * [Gemini API](algorithm/day-03/gemini-api.md)
 * [よくあるエラーと解決法](algorithm/yokuaruerto.md)
 * [Page 4](algorithm/page-4.md)
