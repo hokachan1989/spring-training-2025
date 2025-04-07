@@ -49,6 +49,8 @@
 
 ### 二分探索のアルゴリズム
 
+{% embed url="https://hokachan1989.github.io/spring-training-2025/binary_search.html" %}
+
 #### 基本的な考え方
 
 二分探索（バイナリサーチとも呼ばれます）は、**ソートされたデータ**を対象とする高速な探索アルゴリズムです。
@@ -121,12 +123,6 @@ if result != -1:
 else:
     print("値12は見つかりませんでした")
 ```
-
-### リストを使った二分探索
-
-{% embed url="https://hokachan1989.github.io/spring-training-2025/binary_search.html" %}
-
-
 
 ### フローチャートと疑似コード
 

@@ -43,6 +43,8 @@
 
 ### 線形探索のアルゴリズム
 
+{% embed url="https://hokachan1989.github.io/spring-training-2025/lenear_search.html" %}
+
 #### 基本的な考え方
 
 線形探索 (リニアサーチとも呼ばれます) は、最もシンプルで直感的な探索アルゴリズムです。
@@ -93,10 +95,6 @@ if result != -1:
 else:
     print(f"値{target}は見つかりませんでした")
 ```
-
-### リストを使った線形探索
-
-{% embed url="https://hokachan1989.github.io/spring-training-2025/lenear_search.html" %}
 
 ### フローチャートと疑似コード
 
