@@ -10,7 +10,7 @@
   * [Python: 変数とデータ型](algorithm/day-01/variable.md)
   * [Python: 基本演算子](algorithm/day-01/operator.md)
   * [Python: 関数の基本](algorithm/day-01/function.md)
-  * [Python: 条件分岐 (if 文)](algorithm/day-01/if.md)
+  * [Python: 条件分岐](algorithm/day-01/if.md)
   * [発展問題](algorithm/day-01/fa-zhan-wen-ti.md)
 * [Day 02](algorithm/day-02/README.md)
   * [Python: リストの基本](algorithm/day-02/list.md)
