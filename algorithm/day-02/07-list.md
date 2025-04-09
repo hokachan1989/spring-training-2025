@@ -94,7 +94,7 @@ print(fruits[2])  # 3番目の要素
 インデックスを使って、リストの要素を更新することができます。
 
 ```python
-fruits[1] = "いちご"  # インデックス1の要素を更新
+fruits[1] = "いちご"  # インデックス 1 の要素を更新
 print(fruits)
 ```
 
@@ -107,8 +107,6 @@ print(fruits)
 ```
 
 </details>
-
-> 📝 **ポイント**: `append()` は末尾に追加、`insert()` は指定位置に挿入、`remove()` は値で削除、`pop()` はインデックスで削除・取得します。アルゴリズム実装では、これらの操作の違いを理解することが重要です。
 
 #### 例: インデックスを使ったリスト操作
 
@@ -159,7 +157,7 @@ fruits = ["りんご", "バナナ", "オレンジ", "ぶどう", "メロン"]
 
 # 負のインデックス
 print(fruits[-1])  # 最後の要素
-print(fruits[-2])  # 最後から2番目の要素
+print(fruits[-2])  # 最後から 2番目の要素
 ```
 
 <details>
@@ -222,7 +220,7 @@ print(fruits)
 
 ```python
 fruits = ["りんご", "バナナ", "オレンジ"]
-fruits.insert(1, "いちご")  # インデックス1 (2番目の位置) に挿入
+fruits.insert(1, "いちご")  # インデックス 1 (2番目の位置) に挿入
 print(fruits)
 ```
 
@@ -262,7 +260,7 @@ print(fruits)
 
 ```python
 fruits = ["りんご", "バナナ", "オレンジ"]
-removed_fruit = fruits.pop(1)  # インデックス1の要素を削除して、その値を取得
+removed_fruit = fruits.pop(1)  # インデックス 1 の要素を削除して、その値を取得
 print(removed_fruit)
 print(fruits)
 
@@ -477,13 +475,13 @@ print("最後の要素取り出し後:", animals)
 scores = [85, 92, 78, 65, 90]
 print("初期のスコア:", scores)
 
-# 1. 3番目の要素（インデックス2）を95に更新する
+# 1. 3番目の要素 (インデックス 2) を 95 に更新する
 
 print("更新後のスコア:", scores)
 
-# 2. 最初の要素を5点増やす
+# 2. 最初の要素を 5点増やす
 
-print("最初の要素を5点増やした後:", scores)
+print("最初の要素を 5点増やした後:", scores)
 ```
 
 <details>
@@ -566,15 +564,15 @@ fruits = ["りんご", "バナナ", "オレンジ", "バナナ", "ぶどう"]
 numbers = [5, 2, 8, 1, 9, 3]
 print("元のリスト:", numbers)
 
-# 1. numbersを昇順にソートする
+# 1. numbers を昇順にソートする
 
 print("昇順ソート後:", numbers)
 
-# 2. numbersを降順にソートする
+# 2. numbers を降順にソートする
 
 print("降順ソート後:", numbers)
 
-# 3. numbersの要素の順序を反転させる
+# 3. numbers の要素の順序を反転させる
 
 print("反転後:", numbers)
 ```
@@ -598,19 +596,19 @@ print("反転後:", numbers)
 ```python
 grades = [78, 95, 68, 87, 92, 75, 85, 81]
 
-# 1. gradesの要素数を取得して表示する
+# 1. grades の要素数を取得して表示する
 
 
-# 2. gradesの最大値を取得して表示する
+# 2. grades の最大値を取得して表示する
 
 
-# 3. gradesの最小値を取得して表示する
+# 3. grades の最小値を取得して表示する
 
 
-# 4. gradesの合計を取得して表示する
+# 4. grades の合計を取得して表示する
 
 
-# 5. gradesの平均値を計算して表示する
+# 5. grades の平均値を計算して表示する
 
 
 ```
