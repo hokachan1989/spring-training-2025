@@ -36,7 +36,7 @@ for i in range(5):
 
 ### 8.2 for ループの基本構造
 
-<div align="left"><figure><img src="../../.gitbook/assets/image (5).png" alt="" width="375"><figcaption></figcaption></figure></div>
+<div align="left"><figure><img src="../../.gitbook/assets/image (9).png" alt="" width="375"><figcaption></figcaption></figure></div>
 
 `for` ループは、指定した範囲や集合の各要素に対して、一定の処理を繰り返し実行するための構造です。
 
@@ -224,7 +224,7 @@ print(numbers)
 
 ### 8.5 while ループの基本構造
 
-<div align="left"><figure><img src="../../.gitbook/assets/image (1).png" alt="" width="375"><figcaption></figcaption></figure></div>
+<div align="left"><figure><img src="../../.gitbook/assets/image (10).png" alt="" width="375"><figcaption></figcaption></figure></div>
 
 `while` ループは、指定した条件が真である限り、処理を繰り返し実行するための構造です。
 
