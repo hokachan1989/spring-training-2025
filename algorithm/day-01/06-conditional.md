@@ -68,14 +68,15 @@ xは正の数です
 
 <div align="left"><figure><img src="../../.gitbook/assets/image (8).png" alt="" width="563"><figcaption></figcaption></figure></div>
 
-<pre><code># 基本構文
+```
+# 基本構文
 if 条件式:
-<strong>    # 条件が真の場合に実行される処理
-</strong>    処理A
+    # 条件が真の場合に実行される処理
+    処理A
 else:
     # 条件が偽の場合に実行される処理
     処理B
-</code></pre>
+```
 
 > 📝 **ポイント**: `if` 文と `else` 文は対になっており、条件が満たされない場合は必ず `else` ブロックの処理が実行されます。
 
