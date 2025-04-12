@@ -108,30 +108,6 @@ else:
 
 <div align="left"><figure><img src="../../.gitbook/assets/image.png" alt="" width="563"><figcaption></figcaption></figure></div>
 
-#### 線形探索の疑似コード
-
-線形探索のアルゴリズムを、特定のプログラミング言語に依存しない 「疑似コード」 で表現すると以下のようになります。
-
-```
-function linear_search(リスト, 探索値):
-    // 1. リストの先頭（インデックス0）から始める
-    インデックス = 0
-
-    // 2. リストの最後まで繰り返す (インデックスがリストの長さ未満の間)
-    while (インデックス < リストの長さ):
-        // 3. 現在の要素 (リスト[インデックス]) が探索値と等しいか比較する
-        if リスト[インデックス] == 探索値:
-            // 4. 等しければ、現在のインデックスを返して終了
-            return インデックス
-
-        // 5. 等しくなければ、次の要素を見るためにインデックスを1増やす
-        インデックス = インデックス + 1
-
-    // 6. ループが終了した場合（＝リストの最後まで見つからなかった場合）
-    //    「見つからなかった」ことを示す値を返す
-    return -1
-```
-
 ### 9.5 線形探索の特徴
 
 #### メリット
@@ -167,17 +143,6 @@ function linear_search(リスト, 探索値):
 
 ### 9.6 よくあるエラーと注意点
 
-#### インデックスの範囲外アクセス
-
-```python
-# 間違い
-while i <= len(data_list):  # 不適切な条件：「<=」を使っている
-    # 最後のインデックスで範囲外エラーが発生
-
-# 正しい
-while i < len(data_list):  # 適切な条件：「<」を使う
-```
-
 #### 比較演算子の間違い
 
 ```python
@@ -185,47 +150,25 @@ while i < len(data_list):  # 適切な条件：「<」を使う
 if data_list[i] = target:  # 代入演算子を使っている
 
 # 正しい
-if data_list[i] == target:  # 比較演算子を使う
+if data_list[i] == target:  # 比較演算子を使うント
 ```
 
-
-
-#### 無限ループ
+#### 探索の早期リターンを忘れる
 
 ```python
-# 間違い
-while i < len(data_list):
+# 非効率
+found_index = -1
+for i in range(len(data_list)):
     if data_list[i] == target:
-        return i
-    # カウンタのインクリメントを忘れている
+        found_index = i
+return found_index  # リストの最後まで常に探索する
 
-# 正しい
-while i < len(data_list):
+# 効率的
+for i in range(len(data_list)):
     if data_list[i] == target:
-        return i
-    i += 1  # カウンタをインクリメント
+        return i  # 見つかった時点で即座に返す
+return -1
 ```
-
-
-
-*   **探索の早期終了を忘れる**
-
-    ```python
-    # 非効率
-    found_index = -1
-    for i in range(len(data_list)):
-        if data_list[i] == target:
-            found_index = i
-    return found_index  # リストの最後まで常に探索する
-
-    # 効率的
-    for i in range(len(data_list)):
-        if data_list[i] == target:
-            return i  # 見つかった時点で即座に返す
-    return -1
-    ```
-
-
 
 #### 重複要素への対応
 
@@ -257,11 +200,17 @@ target = 8
 
 ```
 
-**ヒント**:
+<details>
+
+<summary>ヒント</summary>
 
 * `for` ループを使って、リストの各要素にアクセスします
-* 例: `for item in numbers:` または `for i in range(len(numbers)):`
+
+- 例: `for item in numbers:` または `for i in range(len(numbers)):`
+
 * まずは各要素を出力して、リスト内をどのように移動するか確認しましょう
+
+</details>
 
 #### ステップ 2: ターゲット値の検索
 
@@ -277,11 +226,17 @@ target = 8
 
 ```
 
-**ヒント**:
+<details>
+
+<summary>ヒント</summary>
 
 * ループ内で各要素とターゲット値を比較するには `if` 文を使います
-* 例: `if numbers[i] == target:` または `if item == target:`
+
+- 例: `if numbers[i] == target:` または `if item == target:`
+
 * 一致した場合は、「見つかりました！」などのメッセージを表示しましょう
+
+</details>
 
 #### ステップ 3: 見つかった位置 (インデックス) を記録する
 
@@ -305,11 +260,17 @@ else:
     print(f"値{target}は見つかりませんでした")
 ```
 
-**ヒント**:
+<details>
+
+<summary>ヒント</summary>
 
 * インデックスを使ったループを使うと便利です: `for i in range(len(numbers)):`
-* 一致した場合は、そのインデックスを `found_index` 変数に記録します
+
+- 一致した場合は、そのインデックスを `found_index` 変数に記録します
+
 * 最初は「見つからなかった」ことを示す `-1` で初期化し、見つかった場合にのみ更新します
+
+</details>
 
 #### ステップ 4: 効率化 - 値が見つかったら探索を終了する
 
@@ -334,10 +295,15 @@ else:
     print(f"値{target}は見つかりませんでした")
 ```
 
-**ヒント**:
+<details>
+
+<summary>ヒント</summary>
 
 * ループ内で値が見つかったら、`break` 文を使ってループを終了します
-* これにより、不要な比較を減らして効率的に探索できます
+
+- これにより、不要な比較を減らして効率的に探索できます
+
+</details>
 
 #### ステップ5: 関数化 - 線形探索を関数にまとめる
 
@@ -370,13 +336,17 @@ else:
     print(f"値{target_value}は見つかりませんでした")
 ```
 
-**ヒント**:
+<details>
+
+<summary>ヒント</summary>
 
 * 関数内では、外部変数 (found\_indexなど) を使うのではなく、直接 `return` を使ってインデックスを返すことができます
-* 値が見つかった場合はそのインデックスを返し、見つからなかった場合は `-1` を返します
+
+- 値が見つかった場合はそのインデックスを返し、見つからなかった場合は `-1` を返します
+
 * 関数化することで、異なるリストやターゲット値でも再利用できるようになります
 
-
+</details>
 
 #### 問題 9-2: 名前検索システム
 
@@ -398,8 +368,14 @@ search_name = "田中"
 
 ```
 
-**ヒント**:
+<details>
+
+<summary>ヒント</summary>
 
 * 作成した `linear_search` 関数を使って名前を探します
-* 結果に応じて適切なメッセージを表示します
+
+- 結果に応じて適切なメッセージを表示します
+
 * 人間が読みやすいように、「何番目」という表現では通常1から始まるため、インデックスに1を足すとよいでしょう
+
+</details>
