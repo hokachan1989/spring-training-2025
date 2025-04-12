@@ -106,7 +106,7 @@ else:
 
 線形探索のアルゴリズムをフローチャートで表現すると、以下のようになります。
 
-<div align="left"><figure><img src="../../.gitbook/assets/image (6).png" alt="" width="563"><figcaption></figcaption></figure></div>
+<div align="left"><figure><img src="../../.gitbook/assets/image.png" alt="" width="563"><figcaption></figcaption></figure></div>
 
 #### 線形探索の疑似コード
 
