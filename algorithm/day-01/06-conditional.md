@@ -17,7 +17,7 @@
 
 ### 6.2 if 文の基本構造
 
-<div align="left"><figure><img src="../../.gitbook/assets/image (1) (1).png" alt="" width="375"><figcaption></figcaption></figure></div>
+<div align="left"><figure><img src="../../.gitbook/assets/image (1) (1) (1).png" alt="" width="375"><figcaption></figcaption></figure></div>
 
 Pythonでは `if` 文を使って条件分岐を実装します。
 
@@ -66,7 +66,7 @@ xは正の数です
 
 条件が満たされない場合に別の処理を行いたい場合は、`if-else` 構文を使用します。
 
-<div align="left"><figure><img src="../../.gitbook/assets/image (2) (1).png" alt="" width="563"><figcaption></figcaption></figure></div>
+<div align="left"><figure><img src="../../.gitbook/assets/image (2) (1) (1).png" alt="" width="563"><figcaption></figcaption></figure></div>
 
 <pre><code># 基本構文
 if 条件式:

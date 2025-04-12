@@ -36,6 +36,8 @@ for i in range(5):
 
 ### 8.2 for ループの基本構造
 
+<div align="left"><figure><img src="../../.gitbook/assets/image (3).png" alt="" width="375"><figcaption></figcaption></figure></div>
+
 `for` ループは、指定した範囲や集合の各要素に対して、一定の処理を繰り返し実行するための構造です。
 
 ```python
