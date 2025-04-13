@@ -20,10 +20,10 @@
   * [実践問題 ②](algorithm/day-02/exercises-02.md)
 * [Day 03](algorithm/day-03/README.md)
   * [11. バブルソート](algorithm/day-03/bubble-sort.md)
-  * [12. 選択ソート](algorithm/day-03/selection-sort.md)
+  * [選択ソート](algorithm/day-03/selection-sort.md)
   * [挿入ソート](algorithm/day-03/insertion-sort.md)
-  * [13. アルゴリズムの計算量](algorithm/day-03/complexity.md)
-  * [14. Gemini API 入門](algorithm/day-03/14.-gemini-api-ru-men.md)
+  * [アルゴリズムの計算量](algorithm/day-03/complexity.md)
+  * [Gemini API 入門](algorithm/day-03/gemini-api-ru-men.md)
 * [Draw.io 入門](algorithm/draw.io-ru-men.md)
 * [実践的なミニプロジェクト](algorithm/naminipurojekuto.md)
 
