@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>選択ソートの可視化 (ステップ実行 - 通常CSS)</title>
+    <style>
+        /* Interフォントの読み込み */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        /* 基本スタイル */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* メインコンテナー */
+        .container {
+            background-color: white;
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 56rem;
+            /* 幅広に */
+            box-sizing: border-box;
+        }
+
+        /* 見出し */
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #1f2937;
+        }
+
+        /* 説明文エリア */
+        .info-box {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 24px;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        /* 設定エリア */
+        .settings-area {
+            display: flex;
+            flex-direction: column;
+            /* Mobile first */
+            gap: 16px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+
+        .input-group {
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            line-height: 1.5;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+            font-size: 1rem;
+            height: 42px;
+        }
+
+        input[type="text"]:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+
+        /* ボタンエリア */
+        .button-group {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            /* Full width on mobile */
+            justify-content: flex-start;
+        }
+
+        /* ボタン共通スタイル */
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 50%;
+            font-weight: 600;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: background-color 0.15s ease-in-out, opacity 0.15s ease-in-out, border-color 0.15s ease-in-out;
+            cursor: pointer;
+            line-height: 1;
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            background-color: transparent;
+        }
+
+        button img {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 開始/次へボタン */
+        #start-sort-button,
+        #next-step-button {
+            background-color: #60a5fa;
+            /* blue-400 */
+            border-color: #60a5fa;
+        }
+
+        #start-sort-button:hover,
+        #next-step-button:hover {
+            background-color: #3b82f6;
+            /* blue-500 */
+            border-color: #3b82f6;
+        }
+
+        #start-sort-button img,
+        #next-step-button img {
+            filter: brightness(0) invert(1);
+        }
+
+        /* リセットボタン */
+        #reset-button {
+            background-color: transparent;
+            border-color: #9ca3af;
+            /* gray-400 枠線 */
+        }
+
+        #reset-button:hover {
+            background-color: #f3f4f6;
+            /* gray-100 背景 */
+            border-color: #6b7280;
+            /* gray-500 枠線 */
+        }
+
+        #reset-button img {
+            filter: invert(52%) sepia(8%) saturate(415%) hue-rotate(176deg) brightness(90%) contrast(85%);
+        }
+
+        #reset-button:hover img {
+            filter: invert(39%) sepia(11%) saturate(414%) hue-rotate(177deg) brightness(95%) contrast(88%);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #e5e7eb !important;
+            border-color: #d1d5db !important;
+            box-shadow: none;
+        }
+
+        button:disabled img {
+            filter: brightness(0.8);
+        }
+
+        button:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+
+        #start-sort-button:focus,
+        #next-step-button:focus {
+            box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.5);
+        }
+
+        #reset-button:focus {
+            box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.5);
+        }
+
+        /* Medium screens and up (レイアウト調整) */
+        @media (min-width: 768px) {
+            .settings-area {
+                flex-direction: row;
+                align-items: flex-end;
+            }
+
+            #list-input-group {
+                flex-grow: 1;
+                flex-shrink: 1;
+            }
+
+            .button-group {
+                flex-grow: 0;
+                flex-shrink: 0;
+                width: auto;
+                justify-content: flex-end;
+            }
+        }
+
+        /* リスト表示エリア */
+        .list-display-wrapper {
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            /* マーカー表示スペース */
+            scrollbar-width: thin;
+            scrollbar-color: #9CA3AF #F3F4F6;
+        }
+
+        .list-display-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .list-display-wrapper::-webkit-scrollbar-track {
+            background: #F3F4F6;
+            border-radius: 4px;
+        }
+
+        .list-display-wrapper::-webkit-scrollbar-thumb {
+            background-color: #9CA3AF;
+            border-radius: 4px;
+            border: 2px solid #F3F4F6;
+        }
+
+        .list-label {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+
+        .list-container-base {
+            display: flex;
+            gap: 12px;
+            /* 要素間の固定ギャップ */
+            align-items: center;
+            justify-content: flex-start;
+            padding: 16px;
+            /* コンテナ自体のパディング */
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            min-height: 40px;
+            /* 高さを調整 */
+            width: max-content;
+            /* 内容に応じた幅 */
+            box-sizing: border-box;
+            position: relative;
+            /* マーカー基準用 */
+            margin-bottom: 15px;
+            /* マーカー用スペース */
+        }
+
+        #index-container {
+            margin-top: 4px;
+            min-height: 20px;
+            font-size: 0.75rem;
+            color: #4b5563;
+            background-color: transparent;
+            border: none;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .list-item,
+        .index-item {
+            width: 40px;
+            /* 固定幅 */
+            text-align: center;
+            /* テキスト中央揃え */
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        /* リスト要素 */
+        .list-item {
+            height: 40px;
+            /* 固定高さ */
+            padding: 0;
+            /* パディング削除 */
+            display: flex;
+            /* 中央揃えのため */
+            align-items: center;
+            /* 縦方向中央揃え */
+            justify-content: center;
+            /* 横方向中央揃え */
+            border-radius: 6px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            background-color: white;
+            border: 1px solid #d1d5db;
+            /* デフォルトの枠線太さ 1px */
+            color: #374151;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
+            position: relative;
+            /* マーカー用 */
+        }
+
+        /* 走査位置(j)マーカー */
+        .list-item.scan-marker::before {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            /* 位置調整 */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 6px solid #fbbf24;
+            /* 下向き▼ アンバー色 */
+            opacity: 1;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        /* インデックス要素 */
+        .index-item {
+            padding: 0;
+            /* パディング不要 */
+        }
+
+        .boundary-i {
+            /* 未ソート部分の先頭 i */
+            border-color: #fbbf24 !important;
+            /* アンバー色 */
+            border-width: 2px !important;
+            /* ★ 枠線太さ 2px */
+        }
+
+        .current-min {
+            /* 現在の最小値 minIndex */
+            background-color: #fef3c7 !important;
+            /* yellow-200 */
+            border-color: #fbbf24 !important;
+            /* amber-400 */
+            border-width: 2px !important;
+            /* ★ 枠線太さ 2px */
+        }
+
+        .swapping {
+            /* 交換中の要素 */
+            background-color: #eff6ff !important;
+            /* 薄い青色 */
+            border-color: #bfdbfe !important;
+            /* 青系の枠線 */
+            color: #1e3a8a !important;
+            /* 青系の文字色 */
+            border-width: 2px !important;
+            /* ★ 枠線太さ 2px */
+            transition: background-color 0.1s linear, border-color 0.1s linear, color 0.1s linear;
+        }
+
+        .sorted {
+            /* ソート済み要素 */
+            background-color: #d1fae5 !important;
+            /* green-100 */
+            border-color: #6ee7b7 !important;
+            /* green-300 */
+            color: #065f46 !important;
+            /* green-800 */
+            border-width: 2px !important;
+            /* ★ 枠線太さ 2px */
+        }
+
+
+        /* ステータス表示エリア */
+        .status-area {
+            text-align: left;
+            margin-top: 24px;
+            min-height: 3em;
+            line-height: 1.5;
+        }
+
+        #pass-status {
+            /* 未ソート範囲表示に使用 */
+            display: block;
+            font-weight: 600;
+            color: #1d4ed8;
+            white-space: nowrap;
+            margin-bottom: 4px;
+            min-height: 1.2em;
+        }
+
+        #status {
+            display: block;
+            color: #374151;
+            font-weight: 500;
+            min-height: 1.5em;
+        }
+
+        /* メッセージボックス */
+        #message-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            z-index: 1000;
+            display: none;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>選択ソートの可視化 (ステップ実行)</h1>
+
+        <div class="info-box">
+            <p>
+                選択ソートは、リストの未ソート部分から最小値を探し、未ソート部分の先頭要素と交換していくことで整列します。「開始」でソートを始め、「次へ」ボタンでステップごとに進めます。
+            </p>
+        </div>
+
+        <div class="settings-area">
+            <div id="list-input-group" class="input-group">
+                <label for="list-input">リスト (カンマ区切り):</label>
+                <input type="text" id="list-input" value="64, 25, 12, 22, 11">
+            </div>
+            <div class="button-group">
+                <button id="start-sort-button" title="開始">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/play.svg" alt="開始" />
+                </button>
+                <button id="reset-button" style="display: none;" title="リセット">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/rotate-ccw.svg" alt="リセット" />
+                </button>
+                <button id="next-step-button" style="display: none;" title="次へ">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/arrow-right.svg" alt="次へ" />
+                </button>
+            </div>
+        </div>
+
+        <div class="list-display-wrapper">
+            <p class="list-label">リスト:</p>
+            <div id="list-container" class="list-container-base">
+            </div>
+            <div id="index-container" class="list-container-base">
+            </div>
+        </div>
+
+        <div class="status-area">
+            <p id="pass-status"></p>
+            <p id="status">リストを入力して「開始」を押してください。</p>
+        </div>
+    </div>
+
+    <div id="message-box"></div>
+
+    <script>
+        // === JavaScript は変更なし ===
+        const listInput = document.getElementById('list-input');
+        const startSortButton = document.getElementById('start-sort-button');
+        const nextStepButton = document.getElementById('next-step-button');
+        const resetButton = document.getElementById('reset-button');
+        const listContainer = document.getElementById('list-container');
+        const indexContainer = document.getElementById('index-container');
+        const statusElement = document.getElementById('status');
+        const passStatusElement = document.getElementById('pass-status');
+        const messageBox = document.getElementById('message-box');
+
+        let listItems = [];
+        let indexItems = [];
+        let sortList = [];
+        let i = 0;
+        let j = 0;
+        let minIndex = 0;
+        let sortActive = false;
+        let sortState = 'idle';
+        let pendingMinIndex = -1;
+        let previousScanIndex = -1;
+
+        function updateButtonVisibility() {
+            const isSorted = sortState === 'done';
+            if (sortActive && !isSorted) {
+                startSortButton.style.display = 'none';
+                nextStepButton.style.display = 'inline-flex';
+                resetButton.style.display = 'inline-flex';
+                nextStepButton.disabled = false;
+                resetButton.disabled = false;
+            } else {
+                if (isSorted) {
+                    startSortButton.style.display = 'none';
+                    nextStepButton.style.display = 'none';
+                    resetButton.style.display = 'inline-flex';
+                    resetButton.disabled = false;
+                } else {
+                    startSortButton.style.display = 'inline-flex';
+                    nextStepButton.style.display = 'none';
+                    resetButton.style.display = 'none';
+                    startSortButton.disabled = false;
+                }
+            }
+        }
+
+        function initializeDisplay() {
+            listContainer.innerHTML = '';
+            indexContainer.innerHTML = '';
+            listItems = [];
+            indexItems = [];
+            const rawList = listInput.value.split(',').map(item => item.trim()).filter(item => item !== '');
+            sortList = rawList.map(item => parseInt(item, 10)).filter(item => !isNaN(item));
+            if (rawList.length > 0 && sortList.length !== rawList.length) {
+                showMessage("リストの無効な入力は無視されました。");
+                listInput.value = sortList.join(', ');
+            }
+            sortList.forEach((value, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.textContent = value;
+                itemDiv.className = 'list-item';
+                listContainer.appendChild(itemDiv);
+                listItems.push(itemDiv);
+                const indexDiv = document.createElement('div');
+                indexDiv.textContent = index;
+                indexDiv.className = 'index-item';
+                indexContainer.appendChild(indexDiv);
+                indexItems.push(indexDiv);
+            });
+            handleResetSort();
+        }
+
+        function handleResetSort() {
+            sortActive = false;
+            i = 0; j = 0; minIndex = 0;
+            sortState = 'idle';
+            pendingMinIndex = -1;
+            previousScanIndex = -1;
+            listItems.forEach(item => { item.className = 'list-item'; });
+            statusElement.textContent = 'リストを入力して「開始」を押してください。';
+            passStatusElement.textContent = '';
+            listInput.disabled = false;
+            updateButtonVisibility();
+        }
+
+        function showMessage(message) {
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            setTimeout(() => { messageBox.style.display = 'none'; }, 4000);
+        }
+
+        function handleStartSort() {
+            initializeDisplay();
+            if (sortList.length <= 1) {
+                showMessage("リストの要素が1つ以下なのでソートは不要です。");
+                handleResetSort(); return;
+            }
+            sortActive = true;
+            i = 0; minIndex = i; j = i + 1;
+            sortState = 'finding';
+            pendingMinIndex = -1;
+            previousScanIndex = -1;
+            listInput.disabled = true;
+            updateButtonVisibility();
+            updatePassStatus();
+            statusElement.textContent = `未ソート範囲 [${i}..${sortList.length - 1}] から最小値を探します。まずインデックス ${minIndex} (${sortList[minIndex]}) を現在の最小値とします。`;
+            highlightElement(minIndex, 'current-min');
+            highlightElement(i, 'boundary-i');
+        }
+
+        function handleNextStep() {
+            if (!sortActive) return;
+            performSortStep();
+        }
+
+        function performSortStep() {
+            const n = sortList.length;
+            if (sortState !== 'updating_min' && sortState !== 'prepare_next_pass') {
+                removeTemporaryHighlights();
+            }
+            removeScanMarker();
+
+            switch (sortState) {
+                case 'finding':
+                    updatePassStatus();
+                    highlightElement(i, 'boundary-i');
+
+                    if (j >= n) {
+                        statusElement.textContent = `最小値探索完了 (最小値: ${sortList[minIndex]} at index ${minIndex})。`;
+                        highlightElement(minIndex, 'current-min');
+                        if (i === minIndex) {
+                            markSorted(i);
+                            statusElement.textContent += ` 交換不要。位置 ${i} が確定しました。`;
+                            sortState = 'prepare_next_pass';
+                        } else {
+                            statusElement.textContent += ` 位置 ${i} (${sortList[i]}) と最小値 ${sortList[minIndex]} (index ${minIndex}) を交換します。`;
+                            sortState = 'swapping';
+                        }
+                    } else {
+                        updateScanMarker(j);
+                        highlightElement(minIndex, 'current-min');
+                        statusElement.textContent = `インデックス ${j} (${sortList[j]}) を確認中...`;
+                        if (sortList[j] < sortList[minIndex]) {
+                            statusElement.textContent += ` より小さい値を発見！`;
+                            pendingMinIndex = j;
+                            sortState = 'updating_min';
+                        } else {
+                            j++;
+                        }
+                    }
+                    break;
+
+                case 'updating_min':
+                    if (minIndex !== pendingMinIndex && listItems[minIndex]) {
+                        listItems[minIndex].classList.remove('current-min');
+                    }
+                    minIndex = pendingMinIndex;
+                    updatePassStatus();
+                    statusElement.textContent = `最小値の候補をインデックス ${minIndex} (${sortList[minIndex]}) に更新しました。`;
+                    highlightElement(minIndex, 'current-min');
+                    highlightElement(i, 'boundary-i');
+                    j++;
+                    if (j >= n) {
+                        statusElement.textContent += ` 最小値探索完了。`;
+                        if (i === minIndex) {
+                            markSorted(i);
+                            statusElement.textContent += ` 交換不要。位置 ${i} が確定しました。`;
+                            sortState = 'prepare_next_pass';
+                        } else {
+                            statusElement.textContent += ` 位置 ${i} (${sortList[i]}) と交換します。`;
+                            sortState = 'swapping';
+                        }
+                    } else {
+                        sortState = 'finding';
+                    }
+                    break;
+
+                case 'swapping':
+                    updatePassStatus();
+                    statusElement.textContent = `インデックス ${i} (${sortList[i]}) と ${minIndex} (${sortList[minIndex]}) を交換します。`;
+                    swapElements(i, minIndex);
+                    break;
+
+                case 'prepare_next_pass':
+                    removeTemporaryHighlights();
+                    const n_local_prep = sortList.length;
+                    const previous_i = i;
+                    i++;
+                    if (i >= n_local_prep - 1) {
+                        handleSortCompletion();
+                    } else {
+                        minIndex = i; j = i + 1; sortState = 'finding'; needsSwap = false;
+                        updatePassStatus();
+                        statusElement.textContent = `位置 ${previous_i} が確定。次の未ソート範囲 [${i}..${n_local_prep - 1}] の最小値を探します。まずインデックス ${minIndex} (${sortList[minIndex]}) を最小値とします。`;
+                        highlightElement(minIndex, 'current-min');
+                        highlightElement(i, 'boundary-i');
+                    }
+                    break;
+
+                case 'done':
+                case 'idle':
+                default:
+                    break;
+            }
+            updateButtonVisibility();
+        }
+
+        function handleSortCompletion() {
+            markSorted(i);
+            statusElement.textContent = "ソート完了！";
+            passStatusElement.textContent = '';
+            sortActive = false;
+            sortState = 'done';
+            updateButtonVisibility();
+            setTimeout(() => removeTemporaryHighlights(true), 300);
+        }
+
+        function swapElements(idx1, idx2) {
+            highlightElement(idx1, 'swapping');
+            highlightElement(idx2, 'swapping');
+            [sortList[idx1], sortList[idx2]] = [sortList[idx2], sortList[idx1]];
+            setTimeout(() => {
+                listItems[idx1].textContent = sortList[idx1];
+                listItems[idx2].textContent = sortList[idx2];
+                listItems[idx1].classList.remove('swapping', 'current-min', 'scan-marker', 'boundary-i');
+                listItems[idx2].classList.remove('swapping', 'current-min', 'scan-marker', 'boundary-i');
+                listItems[idx1].style.borderWidth = '';
+                listItems[idx2].style.borderWidth = '';
+                markSorted(idx1);
+
+                statusElement.textContent = `交換完了。位置 ${idx1} が確定しました。`;
+                sortState = 'prepare_next_pass';
+                updateButtonVisibility();
+
+            }, 600); // 交換時間 600ms
+        }
+
+        function highlightElement(index, className) {
+            if (index >= 0 && index < listItems.length) {
+                if (!listItems[index].classList.contains('sorted')) {
+                    listItems[index].classList.add(...className.split(' '));
+                }
+            }
+        }
+
+        function removeTemporaryHighlights(forceClearAll = false) {
+            listItems.forEach(item => {
+                if (!item.classList.contains('sorted') || forceClearAll) {
+                    item.classList.remove('current-min', 'boundary-i');
+                    item.style.borderWidth = ''; // 枠線太さリセット
+                    item.style.boxShadow = '';
+                    if (forceClearAll) {
+                        item.className = 'list-item';
+                    }
+                }
+            });
+            if (forceClearAll) removeScanMarker();
+        }
+
+        function updateScanMarker(index) {
+            removeScanMarker();
+            if (index >= 0 && index < listItems.length && !listItems[index].classList.contains('sorted')) {
+                listItems[index].classList.add('scan-marker');
+                previousScanIndex = index;
+            } else {
+                previousScanIndex = -1;
+            }
+        }
+        function removeScanMarker() {
+            if (previousScanIndex !== -1 && listItems[previousScanIndex]) {
+                listItems[previousScanIndex].classList.remove('scan-marker');
+            }
+            previousScanIndex = -1;
+        }
+
+        function markSorted(index) {
+            if (index >= 0 && index < listItems.length) {
+                listItems[index].className = 'list-item sorted';
+                listItems[index].style.borderWidth = ''; // 念のためリセット
+                listItems[index].style.boxShadow = '';
+                removeScanMarker();
+            }
+        }
+
+        function updatePassStatus() {
+            const n = sortList.length;
+            if (i < n - 1 && sortActive) {
+                let minText = (minIndex >= 0 && minIndex < n && listItems[minIndex] && !listItems[minIndex].classList.contains('sorted'))
+                    ? ` (現在の最小値: ${sortList[minIndex]})`
+                    : '';
+                passStatusElement.textContent = `未ソート範囲: [${i}..${n - 1}]${minText}`;
+            } else {
+                passStatusElement.textContent = '';
+            }
+        }
+
+        startSortButton.addEventListener('click', handleStartSort);
+        nextStepButton.addEventListener('click', handleNextStep);
+        resetButton.addEventListener('click', handleResetSort);
+        listInput.addEventListener('input', () => { handleResetSort(); initializeDisplay(); });
+        window.onload = initializeDisplay;
+    </script>
+</body>
+</html>
