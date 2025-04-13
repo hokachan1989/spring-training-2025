@@ -20,13 +20,15 @@
   * [実践問題 ②](algorithm/day-02/exercises-02.md)
 * [Day 03](algorithm/day-03/README.md)
   * [11. バブルソート](algorithm/day-03/bubble-sort.md)
+  * [アルゴリズムの計算量](algorithm/day-03/arugorizumuno.md)
   * [選択ソート](algorithm/day-03/selection-sort.md)
   * [挿入ソート](algorithm/day-03/insertion-sort.md)
-  * [アルゴリズムの計算量](algorithm/day-03/complexity.md)
   * [実践問題 ③](algorithm/day-03/shi-jian-wen-ti.md)
-  * [Gemini API 入門](algorithm/day-03/gemini-api-ru-men.md)
 * [Draw.io 入門](algorithm/draw.io-ru-men.md)
 * [実践的なミニプロジェクト](algorithm/naminipurojekuto.md)
+* [Archive](algorithm/archive/README.md)
+  * [Gemini API 入門](algorithm/archive/gemini-api-ru-men.md)
+  * [アルゴリズムの計算量](algorithm/archive/complexity.md)
 
 ## データベース <a href="#database" id="database"></a>
 
