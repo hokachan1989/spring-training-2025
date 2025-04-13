@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>バブルソートの可視化 (ステップ実行 - 通常CSS)</title>
+    <style>
+        /* Interフォントの読み込み */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        /* 基本スタイル */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* gray-100 */
+            margin: 0;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* メインコンテナ */
+        .container {
+            background-color: white;
+            padding: 32px;
+            border-radius: 8px; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            width: 100%;
+            max-width: 56rem; /* max-w-3xl */
+            box-sizing: border-box;
+        }
+
+        /* 見出し */
+        h1 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700; /* font-bold */
+            margin-bottom: 24px; /* mb-6 */
+            text-align: center;
+            color: #1f2937; /* gray-800 */
+        }
+
+        /* 説明文エリア */
+        .info-box {
+            background-color: #eff6ff; /* blue-50 */
+            border: 1px solid #bfdbfe; /* blue-200 */
+            padding: 16px; /* p-4 */
+            border-radius: 6px; /* rounded-md */
+            margin-bottom: 24px; /* mb-6 */
+            color: #374151; /* gray-700 */
+            font-size: 0.875rem; /* text-sm */
+        }
+
+        /* 設定エリア */
+        .settings-area {
+            display: flex;
+            flex-direction: column; /* Mobile first */
+            gap: 16px; /* gap-4 */
+            margin-bottom: 24px; /* mb-6 */
+            align-items: center;
+        }
+
+        .input-group {
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            color: #374151; /* gray-700 */
+            margin-bottom: 4px; /* mb-1 */
+        }
+
+        input[type="text"] {
+            width: 100%;
+            line-height: 1.5;
+            padding: 8px 12px; /* py-2 px-3 */
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 6px; /* rounded-md */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            box-sizing: border-box;
+            font-size: 1rem; /* text-base */
+            height: 42px; /* Ensure consistent height with buttons */
+        }
+         input[type="text"]:focus {
+             outline: 2px solid transparent;
+             outline-offset: 2px;
+             border-color: #2563eb; /* blue-600 */
+             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* ring-2 ring-blue-300 */
+         }
+
+
+        /* ボタンエリア */
+        .button-group {
+            display: flex;
+            gap: 8px; /* gap-2 */
+            width: 100%; /* Full width on mobile */
+            justify-content: flex-start;
+        }
+
+        /* ボタン共通スタイル */
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 50%; /* Make buttons circular */
+            font-weight: 600; /* font-semibold */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            transition: background-color 0.15s ease-in-out, opacity 0.15s ease-in-out, border-color 0.15s ease-in-out;
+            cursor: pointer;
+            line-height: 1; /* Ensure icon is centered */
+            width: 42px; /* Fixed width */
+            height: 42px; /* Fixed height */
+            flex-shrink: 0;
+            background-color: transparent; /* Default background */
+        }
+        button img {
+            width: 20px; /* Icon size */
+            height: 20px; /* Icon size */
+        }
+
+        /* 開始/次へボタン */
+        #start-sort-button,
+        #next-step-button {
+            background-color: #60a5fa; /* blue-400 */
+            border-color: #60a5fa;
+        }
+        #start-sort-button:hover,
+        #next-step-button:hover {
+            background-color: #3b82f6; /* blue-500 */
+            border-color: #3b82f6;
+        }
+        #start-sort-button img,
+        #next-step-button img {
+             filter: brightness(0) invert(1); /* Make icon white */
+        }
+
+        /* リセットボタン */
+        #reset-button {
+            background-color: transparent;
+            border-color: #9ca3af; /* gray-400 border */
+        }
+        #reset-button:hover {
+            background-color: #f3f4f6; /* gray-100 background */
+            border-color: #6b7280; /* gray-500 border */
+        }
+        #reset-button img {
+             /* Icon color similar to gray-500 */
+             filter: invert(52%) sepia(8%) saturate(415%) hue-rotate(176deg) brightness(90%) contrast(85%);
+        }
+        #reset-button:hover img {
+             /* Icon color similar to gray-600 */
+             filter: invert(39%) sepia(11%) saturate(414%) hue-rotate(177deg) brightness(95%) contrast(88%);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #e5e7eb !important; /* gray-200 */
+            border-color: #d1d5db !important; /* gray-300 */
+            box-shadow: none;
+        }
+         button:disabled img {
+             filter: brightness(0.8); /* Slightly dim icon when disabled */
+         }
+
+        button:focus {
+             outline: 2px solid transparent;
+             outline-offset: 2px;
+         }
+         #start-sort-button:focus,
+         #next-step-button:focus { box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.5); } /* Focus ring blue */
+         #reset-button:focus { box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.5); } /* Focus ring gray */
+
+
+        /* Medium screens and up (レイアウト調整) */
+        @media (min-width: 768px) {
+            .settings-area {
+                flex-direction: row;
+                align-items: flex-end;
+            }
+            #list-input-group {
+                flex-grow: 1;
+                flex-shrink: 1;
+            }
+            .button-group {
+                 flex-grow: 0;
+                 flex-shrink: 0;
+                 width: auto; /* Allow button group to shrink */
+                 justify-content: flex-end;
+            }
+        }
+
+        /* リスト表示エリア */
+        .list-display-wrapper {
+            margin-bottom: 16px; /* mb-4 */
+            overflow-x: auto; /* Enable horizontal scrolling if needed */
+            padding-bottom: 8px; /* Space for scrollbar/marker */
+             /* Firefox scrollbar styling */
+            scrollbar-width: thin;
+            scrollbar-color: #9CA3AF #F3F4F6; /* thumb track */
+        }
+         /* Webkit (Chrome, Safari) scrollbar styling */
+        .list-display-wrapper::-webkit-scrollbar { height: 8px; }
+        .list-display-wrapper::-webkit-scrollbar-track { background: #F3F4F6; border-radius: 4px; }
+        .list-display-wrapper::-webkit-scrollbar-thumb { background-color: #9CA3AF; border-radius: 4px; border: 2px solid #F3F4F6; }
+
+        .list-label {
+             font-size: 1.125rem; /* text-lg */
+             font-weight: 600; /* font-semibold */
+             margin-bottom: 8px; /* mb-2 */
+             color: #1f2937; /* gray-800 */
+        }
+
+        .list-container-base {
+            display: flex;
+            gap: 12px; /* Fixed gap between items */
+            align-items: center;
+            justify-content: flex-start; /* Align items to the start */
+            padding: 16px; /* p-4, Padding for the container itself */
+            background-color: #f9fafb; /* gray-50 */
+            border: 1px solid #e5e7eb; /* gray-200 */
+            border-radius: 6px; /* rounded-md */
+            min-height: 40px; /* Adjusted height */
+            width: max-content; /* Container width adjusts to content */
+            box-sizing: border-box;
+            position: relative; /* For marker positioning */
+            margin-bottom: 15px; /* Space for marker below list items */
+        }
+
+        #index-container {
+            margin-top: 4px; /* mt-1 */
+            min-height: 20px;
+            font-size: 0.75rem; /* text-xs */
+            color: #4b5563; /* gray-600 */
+            background-color: transparent;
+            border: none;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .list-item,
+        .index-item {
+            width: 40px; /* Fixed width for items */
+            text-align: center; /* Center text */
+            flex-shrink: 0; /* Prevent items from shrinking */
+            box-sizing: border-box;
+        }
+
+        /* リスト要素 */
+        .list-item {
+            height: 40px; /* Fixed height */
+            padding: 0; /* Remove padding */
+            display: flex; /* To center content */
+            align-items: center; /* Vertical centering */
+            justify-content: center; /* Horizontal centering */
+            border-radius: 6px; /* rounded-md */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            background-color: white;
+            border: 1px solid #d1d5db; /* gray-300 */
+            color: #374151; /* gray-700 */
+            font-weight: 500; /* font-medium */
+            transition: border-color 0.2s ease-in-out, background-color 0.1s linear, opacity 0.2s ease-in-out;
+            position: relative; /* Needed for the ::before marker */
+        }
+
+        /* 比較位置(j)マーカー */
+        .list-item.compare-marker::before {
+            content: '';
+            position: absolute;
+            bottom: -12px; /* Position below the item */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 6px solid #fbbf24; /* amber-400 - Downward triangle */
+            opacity: 1;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        /* インデックス要素 */
+        .index-item {
+            padding: 0; /* No padding needed */
+        }
+
+        /* 状態変化スタイル */
+        .compare { /* 比較中の要素 */
+            border-color: #fbbf24 !important; /* amber-400 */
+            border-width: 2px !important; /* Thicker border */
+        }
+        .swapping { /* 交換中の要素 */
+            background-color: #eff6ff !important; /* blue-50 */
+            border-color: #bfdbfe !important; /* blue-200 */
+            color: #1e3a8a !important; /* blue-800 */
+            border-width: 2px !important; /* Thicker border */
+            transition: background-color 0.1s linear, border-color 0.1s linear, color 0.1s linear;
+        }
+        .sorted { /* ソート済み要素 */
+            background-color: #d1fae5 !important; /* green-100 */
+            border-color: #6ee7b7 !important; /* green-300 */
+            color: #065f46 !important; /* green-800 */
+            border-width: 2px !important; /* Thicker border */
+        }
+
+        /* ステータス表示エリア */
+        .status-area {
+            text-align: left;
+            margin-top: 24px; /* mt-6 */
+            min-height: 3em; /* Reserve space for 2 lines */
+            line-height: 1.5;
+        }
+        #pass-status {
+            display: block;
+            font-weight: 600; /* font-semibold */
+            color: #1d4ed8; /* blue-700 */
+            white-space: nowrap;
+            margin-bottom: 4px; /* mb-1 */
+            min-height: 1.2em;
+        }
+        #status {
+            display: block;
+            color: #374151; /* gray-700 */
+            font-weight: 500; /* font-medium */
+            min-height: 1.5em;
+        }
+
+         /* メッセージボックス */
+        #message-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            border-radius: 8px; /* rounded-lg */
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            font-size: 0.9rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>バブルソートの可視化 (ステップ実行 - 最適化なし)</h1>
+
+        <div class="info-box">
+            <p>
+                バブルソートは、隣り合う要素を比較・交換しながらリストを整列します。「開始」でソートを始め、「次へ」ボタンでステップごとに進めます。（このバージョンは学習用に最適化を省略し、常に N-1 パス実行します）
+            </p>
+        </div>
+
+        <div class="settings-area">
+            <div id="list-input-group" class="input-group">
+                <label for="list-input">リスト (カンマ区切り):</label>
+                <input type="text" id="list-input" value="5, 1, 4, 2, 3">
+            </div>
+             <div class="button-group">
+                 <button id="start-sort-button" title="開始">
+                     <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/play.svg" alt="開始" />
+                 </button>
+                 <button id="reset-button" style="display: none;" title="リセット">
+                     <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/rotate-ccw.svg" alt="リセット" />
+                 </button>
+                 <button id="next-step-button" style="display: none;" title="次へ">
+                     <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/arrow-right.svg" alt="次へ" />
+                 </button>
+             </div>
+        </div>
+
+        <div class="list-display-wrapper">
+            <p class="list-label">リスト:</p>
+            <div id="list-container" class="list-container-base">
+                </div>
+             <div id="index-container" class="list-container-base">
+                 </div>
+        </div>
+
+        <div class="status-area" aria-live="polite">
+            <p id="pass-status"></p>
+            <p id="status">リストを入力して「開始」を押してください。</p>
+        </div>
+    </div>
+
+     <div id="message-box"></div>
+
+    <script>
+        // DOM Elements
+        const listInput = document.getElementById('list-input');
+        const startSortButton = document.getElementById('start-sort-button');
+        const nextStepButton = document.getElementById('next-step-button');
+        const resetButton = document.getElementById('reset-button');
+        const listContainer = document.getElementById('list-container');
+        const indexContainer = document.getElementById('index-container');
+        const statusElement = document.getElementById('status');
+        const passStatusElement = document.getElementById('pass-status');
+        const messageBox = document.getElementById('message-box');
+
+        // State Variables
+        let listItems = []; // Array of list item div elements
+        let indexItems = []; // Array of index item div elements
+        let sortList = []; // The array of numbers to sort
+        let passIndex = 0; // Current pass number (0 to n-2)
+        let compareIndex = 0; // Current comparison index 'j' within a pass
+        let swappedInPass = false; // Flag if any swap happened in the current pass (not used for early exit in this version)
+        let sortActive = false; // Is sorting currently in progress?
+        let sortState = 'idle'; // Current state: 'idle', 'comparing', 'acting', 'pass_complete', 'done'
+        let needsSwap = false; // Flag set during 'comparing' if a swap is needed in 'acting'
+        let previousCompareIndex = -1; // Tracks the index of the element with the compare marker
+
+        // Constants (Optional but good practice)
+        const SWAP_DELAY_MS = 600; // Delay for swap animation
+        const STATE = {
+            IDLE: 'idle',
+            COMPARING: 'comparing',
+            ACTING: 'acting',
+            PASS_COMPLETE: 'pass_complete',
+            DONE: 'done'
+        };
+        const CSS_CLASSES = {
+            COMPARE: 'compare',
+            SWAPPING: 'swapping',
+            SORTED: 'sorted',
+            COMPARE_MARKER: 'compare-marker'
+        };
+
+        /**
+         * Updates the visibility and disabled state of control buttons based on the sort state.
+         */
+        function updateButtonVisibility() {
+             const isSorted = sortState === STATE.DONE;
+            if (sortActive && !isSorted) {
+                startSortButton.style.display = 'none';
+                nextStepButton.style.display = 'inline-flex';
+                resetButton.style.display = 'inline-flex';
+                nextStepButton.disabled = false; // Enable 'Next' during sorting
+                resetButton.disabled = false;
+            } else {
+                 if (isSorted) {
+                    startSortButton.style.display = 'none';
+                    nextStepButton.style.display = 'none'; // Hide 'Next' when done
+                    resetButton.style.display = 'inline-flex';
+                    resetButton.disabled = false; // Enable 'Reset' when done
+                } else { // Idle state
+                    startSortButton.style.display = 'inline-flex';
+                    nextStepButton.style.display = 'none';
+                    resetButton.style.display = 'none';
+                    startSortButton.disabled = false;
+                }
+            }
+        }
+
+        /**
+         * Parses the input, creates list/index elements, and resets the sort state.
+         */
+        function initializeDisplay() {
+            listContainer.innerHTML = '';
+            indexContainer.innerHTML = '';
+            listItems = [];
+            indexItems = [];
+
+            // Parse input string into an array of numbers
+            const rawList = listInput.value.split(',').map(item => item.trim()).filter(item => item !== '');
+            sortList = rawList.map(item => parseInt(item, 10)).filter(item => !isNaN(item));
+
+            // Show message if invalid input was ignored
+            if (rawList.length > 0 && sortList.length !== rawList.length) {
+                showMessage("リストの無効な入力は無視されました。");
+                listInput.value = sortList.join(', '); // Update input field with valid numbers
+            }
+
+            // Create DOM elements for list items and indices
+            sortList.forEach((value, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.textContent = value;
+                itemDiv.className = 'list-item';
+                listContainer.appendChild(itemDiv);
+                listItems.push(itemDiv);
+
+                const indexDiv = document.createElement('div');
+                indexDiv.textContent = index;
+                indexDiv.className = 'index-item';
+                indexContainer.appendChild(indexDiv);
+                indexItems.push(indexDiv);
+            });
+
+            handleResetSort(); // Reset sort state after creating elements
+        }
+
+        /**
+         * Resets the sort state, clears highlights, and updates UI elements.
+         */
+        function handleResetSort() {
+            sortActive = false;
+            passIndex = 0;
+            compareIndex = 0;
+            swappedInPass = false;
+            needsSwap = false;
+            previousCompareIndex = -1;
+            sortState = STATE.IDLE;
+
+            // Clear all visual styles from list items
+            listItems.forEach(item => {
+                item.className = 'list-item'; // Reset to base class
+            });
+            removeCompareMarker(); // Ensure marker is removed
+
+            statusElement.textContent = 'リストを入力して「開始」を押してください。';
+            passStatusElement.textContent = '';
+            listInput.disabled = false; // Re-enable input field
+            updateButtonVisibility();
+        }
+
+        /**
+         * Displays a temporary message at the bottom of the screen.
+         * @param {string} message - The message to display.
+         */
+        function showMessage(message) {
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            // Hide the message after 4 seconds
+            setTimeout(() => { messageBox.style.display = 'none'; }, 4000);
+        }
+
+        /**
+         * Starts the sorting process.
+         */
+        function handleStartSort() {
+             initializeDisplay(); // Re-initialize display based on current input
+             if (sortList.length <= 1) {
+                 showMessage("リストの要素が1つ以下なのでソートは不要です。");
+                 handleResetSort(); // Reset if nothing to sort
+                 return;
+             }
+            sortActive = true;
+            passIndex = 0;
+            compareIndex = 0;
+            swappedInPass = false;
+            needsSwap = false;
+            previousCompareIndex = -1;
+            sortState = STATE.COMPARING; // Start with the comparing state
+            listInput.disabled = true; // Disable input during sort
+
+            updateButtonVisibility();
+            updatePassStatus();
+            statusElement.textContent = `パス ${passIndex + 1} を開始します。`;
+            // Small delay before the first step to show the initial state
+            setTimeout(performSortStep, 100);
+        }
+
+        /**
+         * Handles the 'Next Step' button click.
+         */
+        function handleNextStep() {
+            if (!sortActive || sortState === STATE.DONE) return; // Do nothing if not active or already done
+            performSortStep(); // Execute the next step of the sort
+        }
+
+        /**
+         * Performs one step of the Bubble Sort algorithm based on the current state.
+         */
+        function performSortStep() {
+            const n = sortList.length;
+            // Clear previous comparison highlights before the next step, unless swapping
+            if (sortState !== STATE.ACTING || !needsSwap) {
+                 removeComparisonHighlights();
+            }
+
+            switch (sortState) {
+                case STATE.COMPARING:
+                    const j = compareIndex;
+                    const k = compareIndex + 1; // Index of the next element
+
+                    // Check if we've reached the end of the comparison range for this pass
+                    if (k >= n - passIndex) {
+                        removeCompareMarker(); // Remove marker at the end of the pass
+                        statusElement.textContent = `パス ${passIndex + 1} の比較が完了しました。`;
+                        sortState = STATE.PASS_COMPLETE; // Move to complete the pass
+                    } else {
+                        updateCompareMarker(j); // Place marker on the first element of the pair
+                        highlightComparison(j, k); // Highlight the pair being compared
+                        statusElement.textContent = `インデックス ${j} (${sortList[j]}) と ${k} (${sortList[k]}) を比較します。`;
+
+                        // Determine if a swap is needed
+                        if (sortList[j] > sortList[k]) {
+                            needsSwap = true;
+                            statusElement.textContent += " 交換が必要です。";
+                        } else {
+                            needsSwap = false;
+                            statusElement.textContent += " 交換は不要です。";
+                        }
+                        sortState = STATE.ACTING; // Move to the acting state (swap or move on)
+                    }
+                    break;
+
+                case STATE.ACTING:
+                    const currentJ = compareIndex;
+                    const currentK = compareIndex + 1;
+
+                    if (needsSwap) {
+                        statusElement.textContent = `インデックス ${currentJ} (${sortList[currentJ]}) と ${currentK} (${sortList[currentK]}) を交換します。`;
+                        swapElements(currentJ, currentK); // Perform the visual swap
+                        swappedInPass = true; // Record that a swap occurred in this pass
+                        needsSwap = false; // Reset swap flag
+                    } else {
+                        // No swap needed, just update status
+                        statusElement.textContent = `交換不要。次の比較へ移ります。`;
+                        // Marker will be updated in the next 'comparing' state
+                    }
+
+                    compareIndex++; // Move to the next comparison index
+
+                    // Check if the next comparison is still within the pass boundary
+                    if (compareIndex + 1 >= n - passIndex) {
+                        // If the next comparison would be out of bounds, the pass is complete
+                        sortState = STATE.PASS_COMPLETE;
+                    } else {
+                        // Otherwise, go back to comparing the next pair
+                        sortState = STATE.COMPARING;
+                    }
+                    break;
+
+                 case STATE.PASS_COMPLETE:
+                     // Finalize the current pass and prepare for the next one
+                     finalizePassAndPrepareNext();
+                     break;
+
+                 case STATE.DONE:
+                 case STATE.IDLE:
+                 default:
+                     // Do nothing in these states
+                     break;
+            }
+             updateButtonVisibility(); // Update buttons after each step
+        }
+
+        /**
+         * Marks the last element of the completed pass as sorted and prepares for the next pass or finishes the sort.
+         */
+        function finalizePassAndPrepareNext() {
+             const n = sortList.length;
+             // The element at the end of the comparison range is now sorted
+             const sortedIndex = n - 1 - passIndex;
+             markSorted(sortedIndex);
+             removeComparisonHighlights(); // Clean up highlights from the completed pass
+             removeCompareMarker(); // Clean up marker
+
+             statusElement.textContent = `パス ${passIndex + 1} が完了。要素 ${sortList[sortedIndex]} (インデックス ${sortedIndex}) が確定しました。`;
+
+             passIndex++; // Move to the next pass
+             compareIndex = 0; // Reset comparison index for the new pass
+             swappedInPass = false; // Reset swap flag for the new pass
+             needsSwap = false;
+             previousCompareIndex = -1;
+
+             // Check if all passes are complete (N-1 passes for unoptimized version)
+             if (passIndex >= n - 1) {
+                 handleSortCompletion(); // Sort is finished
+             } else {
+                 // Prepare for the next pass
+                 updatePassStatus();
+                 statusElement.textContent += ` 次のパス ${passIndex + 1} を開始します。`;
+                 sortState = STATE.COMPARING; // Start comparing in the new pass
+             }
+        }
+
+        /**
+         * Finalizes the sort when all passes are complete.
+         */
+        function handleSortCompletion() {
+             // Mark the first element as sorted too (it must be sorted after N-1 passes)
+             if (sortList.length > 0) {
+                markSorted(0);
+             }
+             statusElement.textContent = "ソート完了！";
+             passStatusElement.textContent = ''; // Clear pass status
+             sortActive = false;
+             sortState = STATE.DONE;
+             updateButtonVisibility();
+             removeComparisonHighlights(); // Final cleanup
+             removeCompareMarker();
+        }
+
+        /**
+         * Swaps two elements in the array and updates the visual display with an animation delay.
+         * @param {number} idx1 - Index of the first element.
+         * @param {number} idx2 - Index of the second element.
+         */
+        function swapElements(idx1, idx2) {
+            // Add swapping highlight
+            listItems[idx1].classList.add(CSS_CLASSES.SWAPPING);
+            listItems[idx2].classList.add(CSS_CLASSES.SWAPPING);
+
+            // Swap in the underlying array
+            [sortList[idx1], sortList[idx2]] = [sortList[idx2], sortList[idx1]];
+
+            // Update display after a delay
+            setTimeout(() => {
+                // Update text content
+                listItems[idx1].textContent = sortList[idx1];
+                listItems[idx2].textContent = sortList[idx2];
+                // Remove swapping and comparison highlights after update
+                listItems[idx1].classList.remove(CSS_CLASSES.SWAPPING, CSS_CLASSES.COMPARE);
+                listItems[idx2].classList.remove(CSS_CLASSES.SWAPPING, CSS_CLASSES.COMPARE);
+            }, SWAP_DELAY_MS);
+        }
+
+        /**
+         * Adds the comparison highlight style to two elements.
+         * @param {number} idx1 - Index of the first element.
+         * @param {number} idx2 - Index of the second element.
+         */
+        function highlightComparison(idx1, idx2) {
+            if (idx1 >= 0 && idx1 < listItems.length) listItems[idx1].classList.add(CSS_CLASSES.COMPARE);
+            if (idx2 >= 0 && idx2 < listItems.length) listItems[idx2].classList.add(CSS_CLASSES.COMPARE);
+        }
+
+        /**
+         * Removes the comparison highlight style from all elements.
+         */
+        function removeComparisonHighlights() {
+             listItems.forEach(item => item.classList.remove(CSS_CLASSES.COMPARE));
+        }
+
+        /**
+         * Updates the position of the comparison marker (triangle).
+         * @param {number} index - The index where the marker should appear.
+         */
+        function updateCompareMarker(index) {
+             // Remove marker from previous position first
+             if (previousCompareIndex !== -1 && listItems[previousCompareIndex]) {
+                 listItems[previousCompareIndex].classList.remove(CSS_CLASSES.COMPARE_MARKER);
+             }
+             // Add marker to the new position if valid and not sorted
+             if (index >= 0 && index < listItems.length && !listItems[index].classList.contains(CSS_CLASSES.SORTED)) {
+                 listItems[index].classList.add(CSS_CLASSES.COMPARE_MARKER);
+                 previousCompareIndex = index;
+             } else {
+                 previousCompareIndex = -1; // Invalid index
+             }
+        }
+
+        /**
+         * Removes the comparison marker from its current position.
+         */
+        function removeCompareMarker() {
+             if (previousCompareIndex !== -1 && listItems[previousCompareIndex]) {
+                 listItems[previousCompareIndex].classList.remove(CSS_CLASSES.COMPARE_MARKER);
+             }
+             previousCompareIndex = -1;
+        }
+
+        /**
+         * Marks an element as sorted by adding the sorted style.
+         * @param {number} index - The index of the element to mark.
+         */
+        function markSorted(index) {
+             if (index >= 0 && index < listItems.length) {
+                 listItems[index].classList.add(CSS_CLASSES.SORTED);
+                 // Ensure marker is removed if the element being marked sorted had it
+                 if (index === previousCompareIndex) {
+                    removeCompareMarker();
+                 }
+                 // Remove comparison highlight if present
+                 listItems[index].classList.remove(CSS_CLASSES.COMPARE);
+             }
+        }
+
+        /**
+         * Updates the text indicating the current pass and comparison range.
+         */
+        function updatePassStatus() {
+            const n = sortList.length;
+            // The comparison range ends at index n - passIndex - 1
+            const rangeEnd = n - passIndex - 1;
+            if (passIndex < n - 1 && rangeEnd >= 0 && sortActive) {
+                passStatusElement.textContent = `パス ${passIndex + 1}：比較範囲 [0..${rangeEnd}]`;
+            } else if (sortActive) {
+                 passStatusElement.textContent = `パス ${passIndex + 1}`; // Should typically not happen until the end
+            } else {
+                passStatusElement.textContent = ''; // Clear if not active
+            }
+        }
+
+        // Event Listeners
+        startSortButton.addEventListener('click', handleStartSort);
+        nextStepButton.addEventListener('click', handleNextStep);
+        resetButton.addEventListener('click', handleResetSort);
+        // Reset sort if input changes
+        listInput.addEventListener('input', () => { initializeDisplay(); });
+        // Initialize display on page load
+        window.onload = initializeDisplay;
+    </script>
+</body>
+</html>
