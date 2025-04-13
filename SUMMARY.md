@@ -23,6 +23,7 @@
   * [選択ソート](algorithm/day-03/selection-sort.md)
   * [挿入ソート](algorithm/day-03/insertion-sort.md)
   * [アルゴリズムの計算量](algorithm/day-03/complexity.md)
+  * [実践問題 ③](algorithm/day-03/shi-jian-wen-ti.md)
   * [Gemini API 入門](algorithm/day-03/gemini-api-ru-men.md)
 * [Draw.io 入門](algorithm/draw.io-ru-men.md)
 * [実践的なミニプロジェクト](algorithm/naminipurojekuto.md)
