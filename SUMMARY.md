@@ -26,3 +26,7 @@
   * [14. Gemini API 入門](algorithm/day-03/14.-gemini-api-ru-men.md)
 * [Draw.io 入門](algorithm/draw.io-ru-men.md)
 * [実践的なミニプロジェクト](algorithm/naminipurojekuto.md)
+
+## データベース <a href="#database" id="database"></a>
+
+* [Day 01](database/day-01.md)
