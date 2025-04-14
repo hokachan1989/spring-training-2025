@@ -19,6 +19,7 @@
   * [10. 二分探索](algorithm/day-02/10-binary-search.md)
   * [実践問題 ②](algorithm/day-02/exercises-02.md)
 * [Day 03](algorithm/day-03/README.md)
+  * [プログラムのトレース](algorithm/day-03/puroguramunotorsu.md)
   * [11. バブルソート](algorithm/day-03/bubble-sort.md)
   * [アルゴリズムの計算量](algorithm/day-03/arugorizumuno.md)
   * [選択ソート](algorithm/day-03/selection-sort.md)
