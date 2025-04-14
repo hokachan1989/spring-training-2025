@@ -22,6 +22,7 @@
   * [プログラムのトレース](algorithm/day-03/puroguramunotorsu.md)
   * [11. バブルソート](algorithm/day-03/bubble-sort.md)
   * [アルゴリズムの計算量](algorithm/day-03/arugorizumuno.md)
+  * [PokeAPI 入門](algorithm/day-03/pokeapi-ru-men.md)
   * [選択ソート](algorithm/day-03/selection-sort.md)
   * [挿入ソート](algorithm/day-03/insertion-sort.md)
   * [実践問題 ③](algorithm/day-03/shi-jian-wen-ti.md)
