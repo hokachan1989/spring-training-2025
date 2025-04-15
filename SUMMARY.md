@@ -34,4 +34,14 @@
 
 ## データベース <a href="#database" id="database"></a>
 
-* [Day 01](database/day-01.md)
+* [Day 01](database/day-01/README.md)
+  * [1. データベース入門](database/day-01/1-dtabsu.md)
+  * [2. MySQL Shell for VS Code 入門](database/day-01/2.-mysql-shell-for-vs-code-ru-men.md)
+  * [3. テーブル作成とデータ操作](database/day-01/3-tburutodta.md)
+  * [4. 基本的なデータ検索](database/day-01/4-nadta.md)
+  * [Page 1](database/day-01/page-1.md)
+* [Day 02](database/day-02/README.md)
+  * [5. 検索結果の加工](database/day-02/5-no.md)
+  * [6. データの集計](database/day-02/6-dtano.md)
+* [SQLチートシート](database/sqlchtoshto.md)
+* [よくあるSQLエラーと対処法](database/yokuarusqlerto.md)
