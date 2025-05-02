@@ -43,6 +43,8 @@
 * [Day 02](database/day-02/README.md)
   * [5. 検索結果の加工](database/day-02/5-no.md)
   * [6. データの集計](database/day-02/06-data-aggregation.md)
+* [Day 03](database/day-03/README.md)
+  * [9. サブクエリー](database/day-03/9-sabukuer.md)
 * [SQLチートシート](database/sqlchtoshto.md)
 * [よくあるSQLエラーと対処法](database/yokuarusqlerto.md)
 * [Archived](database/archived/README.md)
